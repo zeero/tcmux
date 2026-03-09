@@ -16,7 +16,7 @@ var statsFormat string
 var statsCmd = &cobra.Command{
 	Use:   "stats",
 	Short: "Show total coding agent stats across all sessions",
-	Long:  `Show aggregated coding agent statistics (Claude Code, Copilot CLI) across all tmux sessions.`,
+	Long:  `Show aggregated coding agent statistics (Claude Code, Copilot CLI, and Codex CLI) across all tmux sessions.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := cmd.Context()
 
