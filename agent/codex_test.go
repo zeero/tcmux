@@ -60,6 +60,8 @@ func TestCodexAgent_ExtractSummary(t *testing.T) {
 		{"Default title", "Codex", ""},
 		{"Custom title", "Implement feature", "Implement feature"},
 		{"Trim spaces", "  Fix bug  ", "Fix bug"},
+		{"Title with emoji prefix", "🤖 Refactor parser", "Refactor parser"},
+		{"Local host title", "tailor.local", ""},
 		{"Empty", "", ""},
 	}
 
@@ -111,6 +113,13 @@ Press enter to confirm or esc to cancel`,
 			name: "Idle with prompt",
 			content: `Previous output
 ❯ `,
+			wantState: StateIdle,
+		},
+		{
+			name: "Idle with model progress footer",
+			content: `Previous output
+❯ Type a message
+gpt-5.3-codex high · 67% left · ~/src/github.com/k1LoW/tcmux`,
 			wantState: StateIdle,
 		},
 		{

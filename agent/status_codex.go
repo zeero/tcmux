@@ -24,9 +24,10 @@ var (
 	}
 
 	// Mode patterns.
-	codexPlanModePattern    = regexp.MustCompile(`(?i)(plan mode\s*·|collaboration mode:\s*plan|for plan mode|you are now in plan mode|#\s*plan mode\b)`)
-	codexDefaultModePattern = regexp.MustCompile(`(?i)(for default mode|you are now in default mode|collaboration mode:\s*default)`)
-	codexAcceptModePattern  = regexp.MustCompile(`(?i)accept edits`)
+	codexPlanModePattern       = regexp.MustCompile(`(?i)(plan mode\s*·|collaboration mode:\s*plan|for plan mode|you are now in plan mode|#\s*plan mode\b)`)
+	codexDefaultModePattern    = regexp.MustCompile(`(?i)(for default mode|you are now in default mode|collaboration mode:\s*default)`)
+	codexAcceptModePattern     = regexp.MustCompile(`(?i)accept edits`)
+	codexProgressFooterPattern = regexp.MustCompile(`\b\d{1,3}% left\b`)
 )
 
 // parseCodexStatus parses the pane content and determines the Codex CLI status.
@@ -91,7 +92,8 @@ func isCodexPromptLine(lines []string) bool {
 		if strings.Contains(line, "? for shortcuts") ||
 			strings.Contains(line, "ctrl+") ||
 			strings.Contains(line, "shift+") ||
-			strings.Contains(line, "Remaining requests:") {
+			strings.Contains(line, "Remaining requests:") ||
+			(strings.Contains(line, "·") && codexProgressFooterPattern.MatchString(line)) {
 			continue
 		}
 		if strings.HasPrefix(line, "❯") ||

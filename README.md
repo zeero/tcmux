@@ -36,7 +36,7 @@ work: 1 window
 |-------|------|-----------|
 | Claude Code | ✻ | pane title starts with `✳` or Braille spinner, process is `claude` or `node` |
 | GitHub Copilot CLI | ⬢ | process is `copilot` |
-| Codex | ❂ | process is `codex` |
+| Codex | ❂ | process name starts with `codex` (e.g. `codex`, `codex-aarch64-a`) |
 
 ### Options
 
@@ -63,7 +63,7 @@ tcmux supports all tmux format variables (e.g., `#{window_index}`, `#{window_nam
 |----------|-------------|
 | `#{agent_status}` | Coding agent status (context-dependent) |
 
-- **list-windows:** `✻ Fix login bug [Idle], ⬢ Review PR [Running]`
+- **list-windows:** `✻ Fix login bug [Idle], ⬢ Review PR [Running], ❂ Refactor parser [Running (plan mode)]`
 - **list-sessions:** `2 Idle, 1 Running`
 
 **Example:**
