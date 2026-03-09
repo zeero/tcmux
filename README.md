@@ -28,6 +28,12 @@ $ tcmux list-sessions  # List tmux sessions with coding agent status (alias: ls)
 dev: 7 windows (attached) - 3 Idle, 1 Running, 1 Waiting
 main: 2 windows - 1 Idle
 work: 1 window
+
+$ tcmux stats  # Show total coding agent stats across all sessions
+I:4 R:1 W:1
+
+$ tcmux stats -F "#{agent_status}"
+4 Idle, 1 Running, 1 Waiting
 ```
 
 ### Supported Agents
@@ -49,6 +55,12 @@ work: 1 window
 | `-t, --target-session` | Specify target session |
 | `-F, --format` | Specify output format (tmux-compatible with tcmux extensions) |
 
+**stats:**
+
+| Option | Description |
+|--------|-------------|
+| `-F, --format` | Specify output format (default: `I:#{total_idle} R:#{total_running} W:#{total_waiting}`) |
+
 **Global:**
 
 | Option | Description |
@@ -62,15 +74,21 @@ tcmux supports all tmux format variables (e.g., `#{window_index}`, `#{window_nam
 | Variable | Description |
 |----------|-------------|
 | `#{agent_status}` | Coding agent status (context-dependent) |
+| `#{total_idle}` | Total idle count (stats only) |
+| `#{total_running}` | Total running count (stats only) |
+| `#{total_waiting}` | Total waiting count (stats only) |
+| `#{total_agents}` | Total agent count (stats only) |
 
 - **list-windows:** `✻ Fix login bug [Idle], ⬢ Review PR [Running], ❂ Refactor parser [Running (plan mode)]`
 - **list-sessions:** `2 Idle, 1 Running`
+- **stats:** `4 Idle, 1 Running, 1 Waiting`
 
 **Example:**
 
 ```console
 $ tcmux list-windows -F "#{window_index}:#{window_name} #{agent_status}"
 $ tcmux list-sessions -F "#{session_name}: #{agent_status}"
+$ tcmux stats -F "💤#{total_idle} 🏃#{total_running} ⏳#{total_waiting}"
 ```
 
 ### Recipe: Window switcher with coding agent status
