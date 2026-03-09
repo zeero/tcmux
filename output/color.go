@@ -42,7 +42,7 @@ func initOutput(o *termenv.Output) {
 	modeColor = output.Color("#B366FF")         // Purple/Magenta
 	claudeThemeColor = output.Color("#E5A000")  // Claude Code orange
 	copilotThemeColor = output.Color("#8534F3") // Copilot purple (official brand color)
-	codexThemeColor = output.Color("#5B6CFF")   // Codex blue-violet
+	codexThemeColor = output.Color("#9EB3F1")   // Codex logo color
 }
 
 // SetColorMode sets the color output mode: always, never, or auto.
