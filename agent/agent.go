@@ -7,6 +7,7 @@ const (
 	TypeClaude  Type = "claude"
 	TypeCopilot Type = "copilot"
 	TypeCodex   Type = "codex"
+	TypeGemini  Type = "gemini"
 )
 
 // Status represents the status of a coding agent instance.
@@ -45,6 +46,7 @@ var detectors = []Detector{
 	&ClaudeAgent{},
 	&CopilotAgent{},
 	&CodexAgent{},
+	&GeminiAgent{},
 }
 
 // Detect checks if a pane might be running a coding agent.
