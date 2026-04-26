@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.4.0](https://github.com/zeero/tcmux/commits/v0.4.0) - 2026-04-26
+- Add Gemini support by @zeero in https://github.com/zeero/tcmux/pull/1
+
 ## [v0.4.0](https://github.com/k1LoW/tcmux/compare/v0.3.2...v0.4.0) - 2026-03-09
 - feat: add Codex CLI support to tcmux by @k1LoW in https://github.com/k1LoW/tcmux/pull/18
 - feat: add `stats` command for aggregated agent statistics by @hiro-o918 in https://github.com/k1LoW/tcmux/pull/17
