@@ -1,5 +1,7 @@
 # Changelog
 
+## [v0.4.1](https://github.com/zeero/tcmux/compare/v0.4.0...v0.4.1) - 2026-04-26
+
 ## [v0.4.0](https://github.com/zeero/tcmux/commits/v0.4.0) - 2026-04-26
 - Add Gemini support by @zeero in https://github.com/zeero/tcmux/pull/1
 
