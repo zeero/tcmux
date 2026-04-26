@@ -53,6 +53,24 @@ func TestDetect(t *testing.T) {
 			wantType:       TypeCodex,
 		},
 		{
+			name:           "Gemini CLI with node",
+			title:          "Gemini CLI",
+			currentCommand: "node",
+			wantType:       TypeGemini,
+		},
+		{
+			name:           "Gemini CLI with binary",
+			title:          "Gemini CLI",
+			currentCommand: "gemini",
+			wantType:       TypeGemini,
+		},
+		{
+			name:           "Gemini CLI with binary and different title",
+			title:          "zsh",
+			currentCommand: "gemini",
+			wantType:       TypeGemini,
+		},
+		{
 			name:           "Normal shell",
 			title:          "zsh",
 			currentCommand: "zsh",
@@ -86,7 +104,11 @@ func TestDetect(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := Detect(tt.title, tt.currentCommand)
+			vars := map[string]string{
+				"pane_title":           tt.title,
+				"pane_current_command": tt.currentCommand,
+			}
+			got := Detect(vars)
 			if tt.wantNil {
 				if got != nil {
 					t.Errorf("Detect(%q, %q) = %v, want nil", tt.title, tt.currentCommand, got.Type())

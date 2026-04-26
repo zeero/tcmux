@@ -2,48 +2,42 @@ package agent
 
 import "testing"
 
-func TestGeminiAgent_MayBeTitle(t *testing.T) {
+func TestGeminiAgent_Match(t *testing.T) {
 	agent := &GeminiAgent{}
-	tests := []struct {
-		name  string
-		title string
-		want  bool
-	}{
-		{"Gemini title", "Gemini CLI", true},
-		{"Lowercase gemini title", "gemini-cli", true},
-		{"Empty title", "", false},
-		{"zsh", "zsh", false},
-		{"Random title", "some random title", false},
-	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := agent.MayBeTitle(tt.title)
-			if got != tt.want {
-				t.Errorf("GeminiAgent.MayBeTitle(%q) = %v, want %v", tt.title, got, tt.want)
-			}
-		})
-	}
-}
+	// Mock GetCommandLine
+	originalGetCommandLine := GetCommandLine
+	defer func() { GetCommandLine = originalGetCommandLine }()
 
-func TestGeminiAgent_MayBeProcess(t *testing.T) {
-	agent := &GeminiAgent{}
 	tests := []struct {
 		name           string
+		title          string
 		currentCommand string
+		commandLine    string
 		want           bool
 	}{
-		{"node", "node", true},
-		{"gemini-cli", "gemini-cli", true},
-		{"gemini", "gemini", true},
-		{"zsh", "zsh", false},
+		{name: "Gemini process", title: "zsh", currentCommand: "gemini", want: true},
+		{name: "Gemini-cli process", title: "zsh", currentCommand: "gemini-cli", want: true},
+		{name: "Node with Gemini title", title: "Gemini CLI", currentCommand: "node", want: true},
+		{name: "Node with lowercase gemini title", title: "gemini-cli", currentCommand: "node", want: true},
+		{name: "Node with no gemini in title", title: "zsh", currentCommand: "node", want: false},
+		{name: "Random process", title: "Gemini CLI", currentCommand: "zsh", want: false},
+		{name: "Node with Gemini in command line", title: "zsh", currentCommand: "node", commandLine: "node /usr/local/bin/gemini", want: true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := agent.MayBeProcess(tt.currentCommand)
+			GetCommandLine = func(pid string) string {
+				return tt.commandLine
+			}
+			vars := map[string]string{
+				"pane_title":           tt.title,
+				"pane_current_command": tt.currentCommand,
+				"pane_pid":             "1234",
+			}
+			got := agent.Match(vars)
 			if got != tt.want {
-				t.Errorf("GeminiAgent.MayBeProcess(%q) = %v, want %v", tt.currentCommand, got, tt.want)
+				t.Errorf("GeminiAgent.Match(%q, %q) = %v, want %v (commandLine: %q)", tt.title, tt.currentCommand, got, tt.want, tt.commandLine)
 			}
 		})
 	}

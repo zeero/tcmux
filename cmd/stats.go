@@ -30,7 +30,7 @@ var statsCmd = &cobra.Command{
 		// Count agent states
 		var totalStats output.TotalStatsContext
 		for _, pane := range panes {
-			detectedAgent := agent.Detect(pane.Vars["pane_title"], pane.Vars["pane_current_command"])
+			detectedAgent := agent.Detect(pane.Vars)
 			if detectedAgent == nil {
 				continue
 			}

@@ -2,49 +2,30 @@ package agent
 
 import "testing"
 
-func TestCodexAgent_MayBeTitle(t *testing.T) {
-	agent := &CodexAgent{}
-	tests := []struct {
-		name  string
-		title string
-		want  bool
-	}{
-		{"Codex default title", "Codex", true},
-		{"Custom title", "Implement feature", true},
-		{"Any title is accepted", "zsh", true},
-		{"Empty title", "", true},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := agent.MayBeTitle(tt.title)
-			if got != tt.want {
-				t.Errorf("CodexAgent.MayBeTitle(%q) = %v, want %v", tt.title, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestCodexAgent_MayBeProcess(t *testing.T) {
+func TestCodexAgent_Match(t *testing.T) {
 	agent := &CodexAgent{}
 	tests := []struct {
 		name           string
+		title          string
 		currentCommand string
 		want           bool
 	}{
-		{"Codex binary", "codex", true},
-		{"Codex wrapped binary name", "codex-aarch64-a", true},
-		{"Copilot binary", "copilot", false},
-		{"Claude binary", "claude", false},
-		{"Zsh shell", "zsh", false},
-		{"Empty", "", false},
+		{"Codex process", "zsh", "codex", true},
+		{"Codex wrapped binary name", "zsh", "codex-aarch64-a", true},
+		{"Copilot process", "zsh", "copilot", false},
+		{"Claude process", "zsh", "claude", false},
+		{"Zsh process", "zsh", "zsh", false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := agent.MayBeProcess(tt.currentCommand)
+			vars := map[string]string{
+				"pane_title":           tt.title,
+				"pane_current_command": tt.currentCommand,
+			}
+			got := agent.Match(vars)
 			if got != tt.want {
-				t.Errorf("CodexAgent.MayBeProcess(%q) = %v, want %v", tt.currentCommand, got, tt.want)
+				t.Errorf("CodexAgent.Match(%q, %q) = %v, want %v", tt.title, tt.currentCommand, got, tt.want)
 			}
 		})
 	}

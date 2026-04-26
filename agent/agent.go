@@ -1,5 +1,10 @@
 package agent
 
+import (
+	"os/exec"
+	"strings"
+)
+
 // Type identifies the type of coding agent.
 type Type string
 
@@ -35,8 +40,7 @@ const (
 type Detector interface {
 	Type() Type
 	Icon() string
-	MayBeTitle(title string) bool
-	MayBeProcess(currentCommand string) bool
+	Match(paneVars map[string]string) bool
 	ExtractSummary(title string) string
 	ParseStatus(content string) Status
 }
@@ -51,11 +55,26 @@ var detectors = []Detector{
 
 // Detect checks if a pane might be running a coding agent.
 // Returns the detected agent or nil if no agent is detected.
-func Detect(title, currentCommand string) Detector {
+func Detect(paneVars map[string]string) Detector {
 	for _, d := range detectors {
-		if d.MayBeTitle(title) && d.MayBeProcess(currentCommand) {
+		if d.Match(paneVars) {
 			return d
 		}
 	}
 	return nil
 }
+
+// GetCommandLine returns the full command line of a process.
+var GetCommandLine = func(pid string) string {
+	if pid == "" {
+		return ""
+	}
+	// ps -p <pid> -o command=
+	cmd := exec.Command("ps", "-p", pid, "-o", "command=")
+	out, err := cmd.Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(out))
+}
+

@@ -2,49 +2,30 @@ package agent
 
 import "testing"
 
-func TestCopilotAgent_MayBeTitle(t *testing.T) {
-	agent := &CopilotAgent{}
-	tests := []struct {
-		name  string
-		title string
-		want  bool
-	}{
-		{"Copilot CLI default title", "GitHub Copilot", true},
-		{"Copilot CLI custom title", "🤖 Detailed code review", true},
-		{"Any title is accepted", "zsh", true}, // Title check is permissive
-		{"Empty title", "", true},              // Detection relies on process name
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := agent.MayBeTitle(tt.title)
-			if got != tt.want {
-				t.Errorf("CopilotAgent.MayBeTitle(%q) = %v, want %v", tt.title, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestCopilotAgent_MayBeProcess(t *testing.T) {
+func TestCopilotAgent_Match(t *testing.T) {
 	agent := &CopilotAgent{}
 	tests := []struct {
 		name           string
+		title          string
 		currentCommand string
 		want           bool
 	}{
-		{"Copilot binary", "copilot", true},
-		{"Node process", "node", false}, // node alone is not enough, could be Claude Code
-		{"Claude binary", "claude", false},
-		{"Zsh shell", "zsh", false},
-		{"Bash shell", "bash", false},
-		{"Empty", "", false},
+		{"Copilot process", "zsh", "copilot", true},
+		{"Copilot process with custom title", "🤖 Review PR", "copilot", true},
+		{"Node process", "zsh", "node", false},
+		{"Claude process", "zsh", "claude", false},
+		{"Zsh process", "zsh", "zsh", false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := agent.MayBeProcess(tt.currentCommand)
+			vars := map[string]string{
+				"pane_title":           tt.title,
+				"pane_current_command": tt.currentCommand,
+			}
+			got := agent.Match(vars)
 			if got != tt.want {
-				t.Errorf("CopilotAgent.MayBeProcess(%q) = %v, want %v", tt.currentCommand, got, tt.want)
+				t.Errorf("CopilotAgent.Match(%q, %q) = %v, want %v", tt.title, tt.currentCommand, got, tt.want)
 			}
 		})
 	}

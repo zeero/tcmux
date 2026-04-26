@@ -70,7 +70,7 @@ var lsCmd = &cobra.Command{
 				continue
 			}
 
-			detectedAgent := agent.Detect(pane.Vars["pane_title"], pane.Vars["pane_current_command"])
+			detectedAgent := agent.Detect(pane.Vars)
 			if detectedAgent == nil {
 				continue
 			}

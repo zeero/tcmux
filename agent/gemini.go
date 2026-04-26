@@ -15,21 +15,25 @@ func (a *GeminiAgent) Icon() string {
 	return "♊"
 }
 
-// MayBeTitle checks if the pane title may indicate a Gemini CLI instance.
-func (a *GeminiAgent) MayBeTitle(title string) bool {
-	// If the process is "gemini-cli" or "gemini", we trust it.
-	// If the process is "node", we need some hint from the title.
-	// Common practice for these CLI tools is to set the title.
-	// If it's just "node" and title is generic like "zsh" or empty, it's likely not it.
-	// Gemini CLI usually has "Gemini" in the title.
-	return strings.Contains(strings.ToLower(title), "gemini")
-}
-
-// MayBeProcess checks if the current command may be a Gemini CLI process.
-func (a *GeminiAgent) MayBeProcess(currentCommand string) bool {
-	// User said: node gemini_path
-	// tmux's pane_current_command usually only shows the executable name (e.g., "node")
-	return currentCommand == "node" || currentCommand == "gemini-cli" || currentCommand == "gemini"
+// Match checks if the pane title and current command indicate a Gemini CLI instance.
+func (a *GeminiAgent) Match(paneVars map[string]string) bool {
+	title := paneVars["pane_title"]
+	currentCommand := paneVars["pane_current_command"]
+	// If the process is "gemini-cli" or "gemini", we trust it regardless of title.
+	if currentCommand == "gemini-cli" || currentCommand == "gemini" {
+		return true
+	}
+	// If the process is "node", we check title OR the full command line.
+	if currentCommand == "node" {
+		if strings.Contains(strings.ToLower(title), "gemini") {
+			return true
+		}
+		// Fallback: check command line
+		if strings.Contains(strings.ToLower(GetCommandLine(paneVars["pane_pid"])), "gemini") {
+			return true
+		}
+	}
+	return false
 }
 
 // ExtractSummary extracts the task summary from the pane title.

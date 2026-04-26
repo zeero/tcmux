@@ -13,15 +13,9 @@ func (a *CodexAgent) Icon() string {
 	return "❂"
 }
 
-// MayBeTitle checks if the pane title may indicate a Codex CLI instance.
-// Title check is permissive - process name is the primary signal.
-func (a *CodexAgent) MayBeTitle(title string) bool {
-	return true
-}
-
-// MayBeProcess checks if the current command may be a Codex CLI process.
-func (a *CodexAgent) MayBeProcess(currentCommand string) bool {
-	currentCommand = strings.ToLower(strings.TrimSpace(currentCommand))
+// Match checks if the pane title and current command indicate a Codex CLI instance.
+func (a *CodexAgent) Match(paneVars map[string]string) bool {
+	currentCommand := strings.ToLower(strings.TrimSpace(paneVars["pane_current_command"]))
 	return currentCommand == "codex" || strings.HasPrefix(currentCommand, "codex-")
 }
 

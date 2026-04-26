@@ -13,19 +13,9 @@ func (a *CopilotAgent) Icon() string {
 	return "⬢"
 }
 
-// MayBeTitle checks if the pane title may indicate a Copilot CLI instance.
-// For Copilot CLI, we primarily rely on process name detection.
-// Title check is permissive - any title is accepted when process is "copilot".
-func (a *CopilotAgent) MayBeTitle(title string) bool {
-	// Copilot CLI can have various titles, so we accept any non-empty title
-	// The actual detection is done by MayBeProcess
-	return true
-}
-
-// MayBeProcess checks if the current command may be a Copilot CLI process.
-// Copilot CLI runs as "copilot".
-func (a *CopilotAgent) MayBeProcess(currentCommand string) bool {
-	return currentCommand == "copilot"
+// Match checks if the pane title and current command indicate a Copilot CLI instance.
+func (a *CopilotAgent) Match(paneVars map[string]string) bool {
+	return paneVars["pane_current_command"] == "copilot"
 }
 
 // ExtractSummary extracts the task summary from the pane title.

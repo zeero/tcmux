@@ -20,8 +20,13 @@ func (a *ClaudeAgent) Icon() string {
 	return "✻"
 }
 
-// MayBeTitle checks if the pane title may indicate a Claude Code instance.
-func (a *ClaudeAgent) MayBeTitle(title string) bool {
+// Match checks if the pane title and current command indicate a Claude Code instance.
+func (a *ClaudeAgent) Match(paneVars map[string]string) bool {
+	title := paneVars["pane_title"]
+	currentCommand := paneVars["pane_current_command"]
+	if currentCommand != "node" && currentCommand != "claude" && !claudeVersionPattern.MatchString(currentCommand) {
+		return false
+	}
 	if strings.HasPrefix(title, claudePrefixIdle) {
 		return true
 	}
@@ -43,13 +48,6 @@ func isBraillePattern(r rune) bool {
 // claudeVersionPattern matches semver-like version strings (e.g., "2.1.34").
 // Native Install of Claude Code reports its version as pane_current_command.
 var claudeVersionPattern = regexp.MustCompile(`^\d+\.\d+`)
-
-// MayBeProcess checks if the current command may be a Claude Code process.
-// Claude Code runs as "node" (npm install), "claude" (brew install --cask claude-code),
-// or a version string like "2.1.34" (Native Install).
-func (a *ClaudeAgent) MayBeProcess(currentCommand string) bool {
-	return currentCommand == "node" || currentCommand == "claude" || claudeVersionPattern.MatchString(currentCommand)
-}
 
 // ExtractSummary extracts the task summary from the pane title.
 func (a *ClaudeAgent) ExtractSummary(title string) string {
