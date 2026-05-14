@@ -16,7 +16,25 @@ func (a *CodexAgent) Icon() string {
 // Match checks if the pane title and current command indicate a Codex CLI instance.
 func (a *CodexAgent) Match(paneVars map[string]string) bool {
 	currentCommand := strings.ToLower(strings.TrimSpace(paneVars["pane_current_command"]))
-	return currentCommand == "codex" || strings.HasPrefix(currentCommand, "codex-")
+	if currentCommand == "codex" || strings.HasPrefix(currentCommand, "codex-") {
+		return true
+	}
+
+	if currentCommand == "node" {
+		title := strings.TrimSpace(paneVars["pane_title"])
+		if title == "Codex" {
+			return true
+		}
+		pid := paneVars["pane_pid"]
+		if pid != "" {
+			cmdLine := GetCommandLine(pid)
+			if strings.Contains(cmdLine, "codex") {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 // ExtractSummary extracts the task summary from the pane title.

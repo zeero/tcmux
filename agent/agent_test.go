@@ -53,6 +53,12 @@ func TestDetect(t *testing.T) {
 			wantType:       TypeCodex,
 		},
 		{
+			name:           "Codex CLI with node",
+			title:          "Codex",
+			currentCommand: "node",
+			wantType:       TypeCodex,
+		},
+		{
 			name:           "Gemini CLI with node",
 			title:          "Gemini CLI",
 			currentCommand: "node",

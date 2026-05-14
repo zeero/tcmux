@@ -4,28 +4,43 @@ import "testing"
 
 func TestCodexAgent_Match(t *testing.T) {
 	agent := &CodexAgent{}
+	origGetCommandLine := GetCommandLine
+	defer func() { GetCommandLine = origGetCommandLine }()
+
 	tests := []struct {
 		name           string
 		title          string
 		currentCommand string
+		pid            string
+		cmdLine        string
 		want           bool
 	}{
-		{"Codex process", "zsh", "codex", true},
-		{"Codex wrapped binary name", "zsh", "codex-aarch64-a", true},
-		{"Copilot process", "zsh", "copilot", false},
-		{"Claude process", "zsh", "claude", false},
-		{"Zsh process", "zsh", "zsh", false},
+		{"Codex process", "zsh", "codex", "", "", true},
+		{"Codex wrapped binary name", "zsh", "codex-aarch64-a", "", "", true},
+		{"Node codex with title", "Codex", "node", "", "", true},
+		{"Node codex with cmdline", "zsh", "node", "12345", "node /usr/local/bin/codex", true},
+		{"Node unrelated", "zsh", "node", "12345", "node index.js", false},
+		{"Copilot process", "zsh", "copilot", "", "", false},
+		{"Claude process", "zsh", "claude", "", "", false},
+		{"Zsh process", "zsh", "zsh", "", "", false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			GetCommandLine = func(pid string) string {
+				if pid == tt.pid {
+					return tt.cmdLine
+				}
+				return ""
+			}
 			vars := map[string]string{
 				"pane_title":           tt.title,
 				"pane_current_command": tt.currentCommand,
+				"pane_pid":             tt.pid,
 			}
 			got := agent.Match(vars)
 			if got != tt.want {
-				t.Errorf("CodexAgent.Match(%q, %q) = %v, want %v", tt.title, tt.currentCommand, got, tt.want)
+				t.Errorf("CodexAgent.Match(%q, %q, %q) = %v, want %v", tt.title, tt.currentCommand, tt.pid, got, tt.want)
 			}
 		})
 	}
