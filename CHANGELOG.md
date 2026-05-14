@@ -1,5 +1,7 @@
 # Changelog
 
+## [v0.4.2](https://github.com/zeero/tcmux/compare/v0.4.1...v0.4.2) - 2026-05-14
+
 ## [v0.4.1](https://github.com/zeero/tcmux/compare/v0.4.0...v0.4.1) - 2026-04-26
 
 ## [v0.4.0](https://github.com/zeero/tcmux/commits/v0.4.0) - 2026-04-26
